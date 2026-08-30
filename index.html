@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Obaid & Hibba — We're Getting Engaged</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Parisienne&family=Jost:wght@200;300;400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='19' fill='%23BE8377'/%3E%3Ctext x='20' y='26' font-family='Georgia,serif' font-size='16' fill='%23FBF7F1' text-anchor='middle'%3EOH%3C/text%3E%3C/svg%3E" />
+  <style>
+    :root {
+      --ivory: #FBF7F1;
+      --ivory-deep: #F3EBE1;
+      --blush: #EAD2CC;
+      --rose: #BE8377;
+      --rose-deep: #9C5F55;
+      --gold: #B58A4A;
+      --ink: #2E2620;
+      --ink-soft: #6E5F55;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ivory);
+      color: var(--ink);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    .font-display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .font-script {
+      font-family: 'Parisienne', cursive;
+    }
+
+    .tracking-wide2 {
+      letter-spacing: .28em;
+    }
+
+    .tracking-wide3 {
+      letter-spacing: .4em;
+    }
+
+    /* ---------- Envelope ---------- */
+    #envelope-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: var(--ivory);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    .fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .envelope {
+      position: relative;
+      width: min(88vw, 340px);
+      height: calc(min(88vw, 340px) * 0.66);
+      cursor: pointer;
+    }
+
+    .env-body {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, #F6EEE4, #EFE0D2);
+      border: 1px solid #D8C4AE;
+      border-radius: 4px;
+      box-shadow: 0 25px 60px -20px rgba(46, 38, 32, .35);
+    }
+
+    .env-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60%;
+      background: linear-gradient(160deg, #EAD9C7, #E0CBB4);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top;
+      transition: transform 1.1s cubic-bezier(.65, 0, .35, 1);
+      border-bottom: 1px solid #D8C4AE;
+      z-index: 3;
+    }
+
+    .envelope.open .env-flap {
+      transform: rotateX(180deg);
+    }
+
+    .env-shadow-l,
+    .env-shadow-r {
+      position: absolute;
+      bottom: 0;
+      width: 50%;
+      height: 75%;
+      background: linear-gradient(160deg, rgba(190, 131, 119, .12), rgba(190, 131, 119, 0));
+      z-index: 2;
+    }
+
+    .env-shadow-l {
+      left: 0;
+      clip-path: polygon(0 100%, 0 20%, 100% 100%);
+    }
+
+    .env-shadow-r {
+      right: 0;
+      clip-path: polygon(100% 100%, 100% 20%, 0 100%);
+    }
+
+    .env-seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #C7947E, var(--rose-deep));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
+      z-index: 5;
+      transition: transform .5s ease, opacity .5s ease;
+    }
+
+    .envelope.open .env-seal {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+
+    .env-seal span {
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--ivory);
+      font-size: 20px;
+      letter-spacing: .05em;
+    }
+
+    .env-card {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 8%;
+      height: 84%;
+      background: var(--ivory);
+      border: 1px solid #E4D6C6;
+      border-radius: 2px;
+      z-index: 1;
+      transition: transform 1s cubic-bezier(.2, .8, .2, 1) .35s, opacity .8s ease .35s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px;
+    }
+
+    .envelope.open .env-card {
+      transform: translateY(-135%) scale(1.03);
+    }
+
+    #envelope-hint {
+      letter-spacing: .32em;
+      font-size: .62rem;
+    }
+
+    /* ---------- Ambient petals canvas ---------- */
+    #petal-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ---------- Monogram hero ---------- */
+    .name-part {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1.1s ease, transform 1.1s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    .reveal-hero .name-left {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-hero .name-right {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: .15s;
+    }
+
+    .reveal-hero .monogram-and {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: .35s;
+    }
+
+    .reveal-hero .hero-sub {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: .55s;
+    }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity .9s ease, transform .9s cubic-bezier(.2, .7, .2, 1);
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1.in-view {
+      transition-delay: .12s;
+    }
+
+    .reveal-delay-2.in-view {
+      transition-delay: .24s;
+    }
+
+    .reveal-delay-3.in-view {
+      transition-delay: .36s;
+    }
+
+    /* ---------- Winding SVG Threads ---------- */
+    .story-thread {
+      display: block;
+      margin: 0 auto;
+      overflow: visible;
+      stroke: var(--rose);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 2.5s cubic-bezier(0.3, 0, 0.2, 1);
+    }
+
+    .in-view .story-thread {
+      stroke-dashoffset: 0;
+    }
+
+    .thread {
+      width: 1px;
+      height: 64px;
+      background: linear-gradient(var(--rose), transparent);
+      margin: 0 auto;
+    }
+
+    /* ---------- Polaroids ---------- */
+    .polaroid {
+      background: #fff;
+      padding: 14px 14px 46px 14px;
+      box-shadow: 0 18px 34px -14px rgba(46, 38, 32, .28);
+      border-radius: 2px;
+      transition: transform .35s ease, box-shadow .35s ease;
+    }
+
+    .polaroid:hover {
+      transform: translateY(-6px) rotate(0deg) !important;
+      box-shadow: 0 24px 40px -14px rgba(46, 38, 32, .35);
+    }
+
+    .polaroid-photo {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(190, 131, 119, .35), transparent 60%),
+        linear-gradient(150deg, #EAD9C7, #D9C2AC);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--rose-deep);
+    }
+
+    /* ---------- Countdown ---------- */
+    .count-box {
+      min-width: 64px;
+    }
+
+    .count-num {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- RSVP card ---------- */
+    .rsvp-card {
+      background: var(--ivory-deep);
+      border: 1px solid #E4D6C6;
+    }
+
+    ::selection {
+      background: var(--blush);
+      color: var(--ink);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="relative">
+
+  <!-- ================= AUDIO ELEMENTS ================= -->
+  <audio id="bg-music" loop>
+    <source src="song1.mp3" type="audio/mpeg">
+  </audio>
+
+  <button id="audio-toggle"
+    class="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-white/80 border border-[#E4D6C6] shadow-sm flex items-center justify-center transition hover:bg-white fade-out"
+    style="color:var(--rose-deep)">
+    <svg id="icon-unmuted" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    </svg>
+    <svg id="icon-muted" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="1" x2="1" y2="23"></line>
+    </svg>
+  </button>
+
+  <!-- ================= ENVELOPE INTRO ================= -->
+  <div id="envelope-screen">
+    <div class="flex flex-col items-center gap-8 px-6">
+      <p class="font-display italic text-[15px] tracking-wide2 uppercase" style="color:var(--ink-soft)">A Little
+        Something For You</p>
+      <div class="envelope" id="envelope" style="perspective:1000px;">
+        <div class="env-shadow-l"></div>
+        <div class="env-shadow-r"></div>
+        <div class="env-card"></div>
+        <div class="env-body"></div>
+        <div class="env-flap"></div>
+        <div class="env-seal"><span>OH</span></div>
+      </div>
+      <p id="envelope-hint" class="uppercase" style="color:var(--ink-soft)">tap the seal to open</p>
+    </div>
+  </div>
+
+  <!-- ================= AMBIENT CANVAS ================= -->
+  <canvas id="petal-canvas"></canvas>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="relative z-10">
+
+    <!-- ---------- HERO / MONOGRAM ---------- -->
+    <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+      <p class="text-[11px] tracking-wide3 uppercase mb-8 name-part hero-sub" style="color:var(--ink-soft)">Together
+        With Their Families</p>
+
+      <div class="flex items-center justify-center gap-4 sm:gap-8 flex-wrap">
+        <h1 class="name-left font-display text-4xl sm:text-6xl" style="color:var(--ink)">Obaid</h1>
+        <span class="monogram-and name-part font-script text-3xl sm:text-4xl" style="color:var(--rose)">&amp;</span>
+        <h1 class="name-right font-display text-4xl sm:text-6xl" style="color:var(--ink)">Hibba</h1>
+      </div>
+
+      <p class="hero-sub name-part font-display italic text-lg sm:text-xl mt-8" style="color:var(--rose-deep)">
+        request the pleasure of your company<br class="hidden sm:block"> as they celebrate their engagement
+      </p>
+
+      <div class="thread mt-10"></div>
+      <p class="hero-sub name-part text-[11px] tracking-wide2 uppercase mt-6" style="color:var(--ink-soft)">Scroll to
+        begin the story</p>
+    </section>
+
+    <!-- ---------- COUNTDOWN ---------- -->
+    <section class="px-6 pb-28">
+      <div class="max-w-md mx-auto text-center reveal">
+        <p class="text-[11px] tracking-wide3 uppercase mb-3" style="color:var(--ink-soft)">Save The Date</p>
+        <p class="font-display text-2xl sm:text-3xl mb-8" style="color:var(--ink)">6th September 2026</p>
+
+        <div class="flex justify-center gap-3 sm:gap-5" id="countdown">
+          <div class="count-box text-center">
+            <div class="count-num font-display text-3xl sm:text-4xl" id="cd-days" style="color:var(--rose-deep)">00
+            </div>
+            <div class="text-[9px] tracking-wide2 uppercase mt-1" style="color:var(--ink-soft)">Days</div>
+          </div>
+          <div class="count-box text-center">
+            <div class="count-num font-display text-3xl sm:text-4xl" id="cd-hours" style="color:var(--rose-deep)">00
+            </div>
+            <div class="text-[9px] tracking-wide2 uppercase mt-1" style="color:var(--ink-soft)">Hours</div>
+          </div>
+          <div class="count-box text-center">
+            <div class="count-num font-display text-3xl sm:text-4xl" id="cd-mins" style="color:var(--rose-deep)">00
+            </div>
+            <div class="text-[9px] tracking-wide2 uppercase mt-1" style="color:var(--ink-soft)">Mins</div>
+          </div>
+          <div class="count-box text-center">
+            <div class="count-num font-display text-3xl sm:text-4xl" id="cd-secs" style="color:var(--rose-deep)">00
+            </div>
+            <div class="text-[9px] tracking-wide2 uppercase mt-1" style="color:var(--ink-soft)">Secs</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- CHAPTER 1: HOW WE MET ---------- -->
+    <section class="px-6 py-24 sm:py-32" style="background:var(--ivory-deep);">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="reveal text-[11px] tracking-wide3 uppercase mb-4" style="color:var(--ink-soft)">Chapter One</p>
+        <h2 class="reveal reveal-delay-1 font-display text-3xl sm:text-4xl mb-8" style="color:var(--ink)">How We Met
+        </h2>
+
+        <div class="reveal reveal-delay-1 mb-8 flex justify-center">
+          <svg class="story-thread" width="40" height="100" viewBox="0 0 40 100">
+            <path d="M20,0 C20,30 40,40 20,50 C0,60 20,70 20,100" />
+          </svg>
+        </div>
+
+        <p class="reveal reveal-delay-2 font-display italic text-lg sm:text-xl leading-relaxed"
+          style="color:var(--ink-soft)">
+          Long before it was anything else, it was ordinary days at Le Lotus Clinique —
+          shared hallways, quiet conversations between tasks, and a friendship that grew
+          without either of us quite noticing. Somewhere between the routine and the
+          unplanned moments, it stopped feeling ordinary at all.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- CHAPTER 2: THE PROPOSAL ---------- -->
+    <section class="px-6 py-24 sm:py-32">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="reveal text-[11px] tracking-wide3 uppercase mb-4" style="color:var(--ink-soft)">Chapter Two</p>
+        <h2 class="reveal reveal-delay-1 font-display text-3xl sm:text-4xl mb-8" style="color:var(--ink)">The Proposal
+        </h2>
+
+        <div class="reveal reveal-delay-1 mb-8 flex justify-center">
+          <svg class="story-thread" width="40" height="100" viewBox="0 0 40 100">
+            <path d="M20,0 C20,30 40,40 20,50 C0,60 20,70 20,100" />
+          </svg>
+        </div>
+
+        <p class="reveal reveal-delay-2 font-display italic text-lg sm:text-xl leading-relaxed"
+          style="color:var(--ink-soft)">
+          A quiet evening, a question that had been building for a while, and an answer
+          that came without hesitation. No grand stage was needed — just the two of us,
+          certain of what came next.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- CHAPTER 3: WHAT'S NEXT ---------- -->
+    <section class="px-6 py-24 sm:py-32" style="background:var(--ivory-deep);">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="reveal text-[11px] tracking-wide3 uppercase mb-4" style="color:var(--ink-soft)">Chapter Three</p>
+        <h2 class="reveal reveal-delay-1 font-display text-3xl sm:text-4xl mb-8" style="color:var(--ink)">What's Next
+        </h2>
+
+        <div class="reveal reveal-delay-1 mb-8 flex justify-center">
+          <svg class="story-thread" width="40" height="100" viewBox="0 0 40 100">
+            <path d="M20,0 C20,30 40,40 20,50 C0,60 20,70 20,100" />
+          </svg>
+        </div>
+
+        <p class="reveal reveal-delay-2 font-display italic text-lg sm:text-xl leading-relaxed"
+          style="color:var(--ink-soft)">
+          This is where you come in. The next chapter is one we'd love to write with the people who matter most to us in
+          the room — so before anything else, we wanted you to be among the first to know.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- POLAROID WALL ---------- -->
+    <section class="px-6 py-24 sm:py-32">
+      <div class="max-w-4xl mx-auto text-center mb-16">
+        <p class="reveal text-[11px] tracking-wide3 uppercase mb-4" style="color:var(--ink-soft)">A Few Moments</p>
+        <h2 class="reveal reveal-delay-1 font-display text-3xl sm:text-4xl" style="color:var(--ink)">Us, Along The Way
+        </h2>
+      </div>
+      <div class="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 place-items-center">
+        <div class="polaroid reveal w-40 sm:w-full" style="transform:rotate(-6deg);">
+          <div class="polaroid-photo">
+            <span class="font-script text-2xl">photo</span>
+          </div>
+        </div>
+        <div class="polaroid reveal reveal-delay-1 w-40 sm:w-full mt-6 sm:mt-10" style="transform:rotate(4deg);">
+          <div class="polaroid-photo">
+            <span class="font-script text-2xl">photo</span>
+          </div>
+        </div>
+        <div class="polaroid reveal reveal-delay-2 w-40 sm:w-full" style="transform:rotate(-3deg);">
+          <div class="polaroid-photo">
+            <span class="font-script text-2xl">photo</span>
+          </div>
+        </div>
+        <div class="polaroid reveal reveal-delay-3 w-40 sm:w-full mt-6 sm:mt-10" style="transform:rotate(5deg);">
+          <div class="polaroid-photo">
+            <span class="font-script text-2xl">photo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- RSVP ---------- -->
+    <section class="px-6 py-24 sm:py-32" style="background:var(--ivory-deep);">
+      <div class="max-w-md mx-auto text-center rsvp-card rounded-sm px-8 py-14 reveal">
+        <p class="text-[11px] tracking-wide3 uppercase mb-4" style="color:var(--ink-soft)">The Details</p>
+        <h2 class="font-display text-3xl mb-6" style="color:var(--ink)">You're Invited</h2>
+        <p class="text-sm leading-relaxed mb-1" style="color:var(--ink-soft)">Venue to be announced</p>
+        <p class="text-sm leading-relaxed mb-8" style="color:var(--ink-soft)">Islamabad / Rawalpindi</p>
+        <div class="thread mb-8"></div>
+        <p class="text-[11px] tracking-wide2 uppercase mb-6" style="color:var(--ink-soft)">Kindly RSVP by the date noted
+          on your card</p>
+        <button class="font-display italic text-lg px-8 py-3 rounded-sm border transition hover:opacity-80"
+          style="border-color:var(--rose-deep); color:var(--rose-deep);">
+          Reply to Us
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- FOOTER ---------- -->
+    <footer class="text-center pb-16 px-6" style="background:var(--ivory-deep);">
+      <p class="font-script text-2xl mb-2" style="color:var(--rose-deep)">Obaid &amp; Hibba</p>
+      <p class="text-[10px] tracking-wide3 uppercase" style="color:var(--ink-soft)">With Love &amp; Gratitude</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // ---------- Audio & Envelope Logic ----------
+    const envelope = document.getElementById('envelope');
+    const envelopeScreen = document.getElementById('envelope-screen');
+    const heroSection = document.getElementById('hero');
+    const bgMusic = document.getElementById('bg-music');
+    const audioToggle = document.getElementById('audio-toggle');
+    const iconUnmuted = document.getElementById('icon-unmuted');
+    const iconMuted = document.getElementById('icon-muted');
+
+    let isPlaying = false;
+
+    // Play music when envelope opens
+    envelope.addEventListener('click', () => {
+      if (envelope.classList.contains('open')) return;
+      envelope.classList.add('open');
+
+      // Attempt to play music
+      bgMusic.volume = 0.5; // Starts at 50% volume
+      bgMusic.play().then(() => {
+        isPlaying = true;
+      }).catch(e => console.log("Audio autoplay prevented"));
+
+      setTimeout(() => {
+        envelopeScreen.classList.add('fade-out');
+        audioToggle.classList.remove('fade-out');
+        document.body.style.overflow = 'auto';
+        heroSection.classList.add('reveal-hero');
+      }, 1150);
+    });
+
+    // lock scroll while envelope is up
+    document.body.style.overflow = 'hidden';
+
+    // Mute/Unmute toggle button
+    audioToggle.addEventListener('click', () => {
+      if (isPlaying) {
+        bgMusic.pause();
+        iconUnmuted.classList.add('hidden');
+        iconMuted.classList.remove('hidden');
+      } else {
+        bgMusic.play();
+        iconUnmuted.classList.remove('hidden');
+        iconMuted.classList.add('hidden');
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // ---------- Scroll reveal ----------
+    const revealEls = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    revealEls.forEach(el => io.observe(el));
+
+    // ---------- Countdown ----------
+    const targetDate = new Date('2026-09-06T00:00:00');
+
+    function updateCountdown() {
+      const now = new Date();
+      let diff = targetDate - now;
+      if (diff < 0) diff = 0;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ---------- Ambient floating petals ----------
+    const canvas = document.getElementById('petal-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H;
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = document.documentElement.scrollHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const petalCount = reducedMotion ? 0 : (window.innerWidth < 640 ? 14 : 26);
+
+    function makePetal() {
+      return {
+        x: Math.random() * W,
+        y: Math.random() * -H,
+        r: 4 + Math.random() * 5,
+        speedY: 0.3 + Math.random() * 0.6,
+        speedX: (Math.random() - 0.5) * 0.4,
+        sway: Math.random() * Math.PI * 2,
+        swaySpeed: 0.008 + Math.random() * 0.012,
+        opacity: 0.25 + Math.random() * 0.35,
+        rot: Math.random() * Math.PI,
+        rotSpeed: (Math.random() - 0.5) * 0.01
+      };
+    }
+    const petals = Array.from({ length: petalCount }, makePetal);
+
+    function drawPetal(p) {
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = '#C08478';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.r, p.r * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, W, H);
+      petals.forEach(p => {
+        p.y += p.speedY;
+        p.sway += p.swaySpeed;
+        p.x += p.speedX + Math.sin(p.sway) * 0.3;
+        p.rot += p.rotSpeed;
+        if (p.y > H + 20) {
+          p.y = -20;
+          p.x = Math.random() * W;
+        }
+        drawPetal(p);
+      });
+      requestAnimationFrame(animate);
+    }
+    if (!reducedMotion) animate();
+
+    // Recompute canvas height after content settles
+    window.addEventListener('load', () => setTimeout(resize, 300));
+  </script>
+
+</body>
+
+</html>
